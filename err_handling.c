@@ -157,42 +157,6 @@ void scenario2_numeric_conversion() {
     write_log("Numeric conversion completed");
 }
 
-/* ============================================================================
- * Scenario 3: 파일 권한 처리 (CWE-560 위반)
- * ============================================================================ */
-void scenario3_permission_handling() {
-    write_log("=== Scenario 3: File Permission Handling ===");
-    
-    const char* secretFile = "secret_data.txt";
-    
-    FILE* f = fopen(secretFile, "w");
-    fprintf(f, "CONFIDENTIAL: API_KEY=sk-12345abcde\n");
-    fprintf(f, "DATABASE_PASSWORD=super_secret_123\n");
-    fclose(f);
-    
-    int fd = OPEN(secretFile, O_RDWR, 0);
-    
-    char readBuffer[256];
-    READ(fd, readBuffer, sizeof(readBuffer) - 1);
-    printf("  Secret file content accessible: YES\n");
-    
-    CLOSE(fd);
-    
-    const char* configDir = "app_config";
-    MKDIR(configDir);
-    
-    char configFilePath[MAX_PATH_LEN];
-    sprintf(configFilePath, "%s%ssettings.ini", configDir, PATH_SEPARATOR);
-    
-    FILE* settings = fopen(configFilePath, "w");
-    fprintf(settings, "[Database]\nhost=localhost\nport=3306\n");
-    fclose(settings);
-    
-    printf("  Config directory created\n");
-    printf("  Settings file created\n");
-    
-    write_log("Permission handling completed");
-}
 
 /* ============================================================================
  * 정리 함수
@@ -226,9 +190,6 @@ int main(int argc, char* argv[]) {
     printf("\n");
     
     scenario2_numeric_conversion();
-    printf("\n");
-    
-    scenario3_permission_handling();
     printf("\n");
     
     close_logging();
